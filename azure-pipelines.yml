@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@1
+  displayName: 'Install Terraform latest'
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV4@4
+  displayName: 'Terraform : azurerm init'
+  inputs:
+    backendServiceArm: connection1
+    backendAzureRmResourceGroupName: SARG
+    backendAzureRmStorageAccountName: storagedivya1
+    backendAzureRmContainerName: container1
+    backendAzureRmKey: divya.tfstate
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV4@4
+  displayName: 'Terraform : azurerm plan'
+  inputs:
+    command: plan
+    environmentServiceNameAzureRM: connection1
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV4@4
+  displayName: 'Terraform : azurerm apply'
+  inputs:
+    command: apply
+    environmentServiceNameAzureRM: connection1
